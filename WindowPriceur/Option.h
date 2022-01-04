@@ -7,6 +7,8 @@
 #include "Data.h"
 #include "Payoff.h"
 
+
+
 class Option {
 protected:
     PayOff* pay_off;
@@ -78,6 +80,10 @@ double Europeene::prime(Data actif) {
     double T = actif.T;
     double prime = 0;
     for (int i = 0; i < nb_it; i++) {
+        //if ((i % 10000) == 0)
+        //{
+        //    SendMessage(hWnd, PBM_STEPIT, 0, 0);
+        //}
         vector<double> proc_prix = MBG(S, r, v, T);
         double last_value = proc_prix[proc_prix.size() - 1];
         prime = prime + pay_off->valeur(last_value, K);

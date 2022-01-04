@@ -47,7 +47,7 @@ PayOffCall::~PayOffCall() {
 }
 //Payoff d'un Call
 double PayOffCall::valeur(double S, double K) {
-    return (double)std::max(S - K, 0.0); // Standard European call pay-off
+    return std::max(S - K, 0.0); // Standard European call pay-off
 }
 
 PayOffPut::PayOffPut() {

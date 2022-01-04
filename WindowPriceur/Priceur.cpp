@@ -1,13 +1,16 @@
 #define NOMINMAX
-#include <windows.h>
+
 #include "resource.h"
-//#include "Payoff.cpp"
-//#include "Option.cpp"
 #include "Data.h"
 #include "Payoff.h"
 #include "Option.h"
 #include <string>
 #include <iostream>
+#include <windows.h>
+#include <CommCtrl.h>
+
+//#include "utilitaire.h"
+//using namespace std;
 
 const char ClassName[] = "MainWindowClass";
 const char DialogClassName[] = "DialogClassName";
@@ -26,31 +29,68 @@ HWND hWndButtonCallRKO;
 HWND hWndButtonPutKO;
 HWND hWndButtonPutRKO;
 
-//Input Screen --------------------------------------------
-HWND hWndSpot;
-HWND hWndStrike;
-HWND hWndMaturity;
-HWND hWndTaux;
-HWND hWndVol;
-HWND hWndBar;
-
-LRESULT CALLBACK DlgPrice(HWND hWndPrice, UINT Msg, WPARAM wParam, LPARAM lParam)
+// PROC BARRE DE CALCUL ///////////////////////////////////////
+BOOL CALLBACK DlgPB(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
     switch (Msg)
     {
     case WM_INITDIALOG:
-        //SetDlgItemText(hWndPrice, IDC_RESULT, (char*)&Prix);
-        //char* buf;
-        //int len;
-        //len = GetWindowTextLength(GetDlgItem(GetParent(hWndPrice), IDC_VOL));
-        //buf = (char*)GlobalAlloc(GPTR, len + 1);
-        //GetDlgItemText(GetParent(hWndPrice), IDC_VOL, buf, len + 1);
-        //DOUBLE Vol = 0.0;
-        //Vol = atof(buf);
-        //GlobalFree((HANDLE)buf);
-        //SendMessage(GetParent(hWndPrice), WM_CLOSE, 0, 0);
-        //SetDlgItemText(hWndPrice, IDC_RESULT,(char*)&Vol);
+        SendDlgItemMessage(hWnDlg, IDE_PB, PBM_SETRANGE, 0, MAKELONG(0, 100));
+        SendDlgItemMessage(hWnDlg, IDE_PB, PBM_SETSTEP, 1, 0);
         return TRUE;
+        break;
+    case WM_CLOSE:
+        DestroyWindow(hWnDlg);
+        hWndDlgBox = NULL;
+        break;
+
+    default:
+        return FALSE;
+        break;
+    }
+}
+
+LRESULT CALLBACK DlgPriceEU(HWND hWndPrice, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (Msg)
+    {
+    case WM_INITDIALOG:
+    {
+        return TRUE;
+    }
+    break;
+
+    case WM_COMMAND:
+    {
+        switch (LOWORD(wParam))
+        {
+        case IDC_OK:
+        {
+            SendMessage(hWndPrice, WM_CLOSE, 0, 0);
+        }
+        break;
+        }
+        return 0;
+    }
+    break;
+    case WM_CLOSE:
+        DestroyWindow(hWndPrice);
+        hWndDlgBox = NULL;
+        break;
+
+    default:
+        return FALSE;
+    }
+}
+
+LRESULT CALLBACK DlgPriceBA(HWND hWndPrice, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (Msg)
+    {
+    case WM_INITDIALOG:
+    {
+        return TRUE;
+    }
     break;
 
     case WM_COMMAND:
@@ -72,19 +112,19 @@ LRESULT CALLBACK DlgPrice(HWND hWndPrice, UINT Msg, WPARAM wParam, LPARAM lParam
         break;
 
     default:
-        return FALSE; // (DefWindowProc(hWndPrice, Msg, wParam, lParam));
+        return FALSE;
     }
 }
 
 
-
-LRESULT CALLBACK DlgProc(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
+// PROC CALL EU ////////////////////////////////////////////////////////////////////////////////////////////////
+LRESULT CALLBACK DlgProcCallEu(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
     switch (Msg)
     {
     case WM_INITDIALOG:
         return TRUE;
-    break;
+        break;
 
     case WM_COMMAND:
     {
@@ -92,13 +132,18 @@ LRESULT CALLBACK DlgProc(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
         {
         case IDC_PRICER:
         {
-            
+
             char* buf;
             int len;
+            
+            HWND Calcul = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PB), hWnDlg, (DLGPROC)DlgPB);
+            HWND Result = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_RESULT), GetParent(hWnDlg), (DLGPROC)DlgPriceEU);
+
             // SPOT----------------------------------------------------
             len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_SPOT));
             buf = (char*)GlobalAlloc(GPTR, len + 1);
             GetDlgItemText(hWnDlg, IDC_SPOT, buf, len + 1);
+            SetDlgItemText(Result, IDC_SPOT2, buf);
             DOUBLE Spot = atof(buf);
             GlobalFree((HANDLE)buf);
 
@@ -106,6 +151,7 @@ LRESULT CALLBACK DlgProc(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
             len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_STRIKE));
             buf = (char*)GlobalAlloc(GPTR, len + 1);
             GetDlgItemText(hWnDlg, IDC_STRIKE, buf, len + 1);
+            SetDlgItemText(Result, IDC_STRIKE2, buf);
             DOUBLE Strike = atof(buf);
             GlobalFree((HANDLE)buf);
 
@@ -113,6 +159,7 @@ LRESULT CALLBACK DlgProc(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
             len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_MAT));
             buf = (char*)GlobalAlloc(GPTR, len + 1);
             GetDlgItemText(hWnDlg, IDC_MAT, buf, len + 1);
+            SetDlgItemText(Result, IDC_MAT2, buf);
             DOUBLE Mat = atof(buf);
             GlobalFree((HANDLE)buf);
 
@@ -120,6 +167,7 @@ LRESULT CALLBACK DlgProc(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
             len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_TAUX));
             buf = (char*)GlobalAlloc(GPTR, len + 1);
             GetDlgItemText(hWnDlg, IDC_TAUX, buf, len + 1);
+            SetDlgItemText(Result, IDC_TAUX2, buf);
             DOUBLE Taux = atof(buf);
             GlobalFree((HANDLE)buf);
 
@@ -127,33 +175,41 @@ LRESULT CALLBACK DlgProc(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
             len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_VOL));
             buf = (char*)GlobalAlloc(GPTR, len + 1);
             GetDlgItemText(hWnDlg, IDC_VOL, buf, len + 1);
+            SetDlgItemText(Result, IDC_VOL2, buf);
             DOUBLE Vol = atof(buf);
             GlobalFree((HANDLE)buf);
-            
+
             Data actif;
             actif.S = Spot;
             actif.K = Strike;
             actif.r = Taux;
             actif.T = Mat;
             actif.v = Vol;
-            PayOff* pay_off_call = new PayOffCall();
-            Europeene call(pay_off_call);
-            double Prime = call.prime(actif);
+            double Prime = 0.0;
+
+            ShowWindow(Calcul, SW_SHOW);
+            for (int i = 0; i < 100000; i++)
+            {
+                if ((i % 1000) == 0)
+                {
+                    SendDlgItemMessage(Calcul, IDE_PB, PBM_STEPIT, 0, 0);
+                }
+                vector<double> proc_prix = MBG(actif.S, actif.r, actif.v, actif.T);
+                double last_value = proc_prix[proc_prix.size() - 1];
+                Prime = Prime + std::max(last_value - actif.K, 0.0);
+            }
+
+            SendMessage(Calcul, WM_CLOSE, 0, 0);
             TCHAR toStr[50];
             sprintf_s(toStr, "%f", Prime);
+            SetDlgItemText(Result, IDC_RESULT, toStr);
             
+            double Price = call_price(actif.S, actif.K, actif.r, actif.v, actif.T);
+            sprintf_s(toStr, "%f", Price);
+            SetDlgItemText(Result, IDC_RESULT2, toStr);
 
-            //hwndText = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("STATIC"), TEXT(MainScreen),
-            //    WS_CHILD | WS_VISIBLE, 350, 20, 300,
-            //    20, hWnDlg, NULL, NULL, NULL);
-            //HWND Result = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_RESULT), GetParent(hWnDlg), (DLGPROC)DlgPrice);
-
-
-
-
-            MessageBox(GetParent(hWnDlg),toStr, "", MB_OK);
-
-            SendMessage(hWnDlg, WM_CLOSE,0,0);
+            ShowWindow(Result, SW_SHOW);
+            SendMessage(hWnDlg, WM_CLOSE, 0, 0);
 
         }
         break;
@@ -169,7 +225,7 @@ LRESULT CALLBACK DlgProc(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
 
     case WM_CLOSE:
         DestroyWindow(hWnDlg);
-        hWnDlg = NULL;
+        hWndDlgBox = NULL;
         break;
 
     default:
@@ -177,6 +233,535 @@ LRESULT CALLBACK DlgProc(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
     }
 }
 
+
+// PROC PUT EU //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+LRESULT CALLBACK DlgProcPutEu(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (Msg)
+    {
+    case WM_INITDIALOG:
+        return TRUE;
+        break;
+
+    case WM_COMMAND:
+    {
+        switch (LOWORD(wParam))
+        {
+        case IDC_PRICER:
+        {
+
+            char* buf;
+            int len;
+            HWND Result = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_RESULT), GetParent(hWnDlg), (DLGPROC)DlgPriceEU);
+
+            // SPOT----------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_SPOT));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_SPOT, buf, len + 1);
+            SetDlgItemText(Result, IDC_SPOT2, buf);
+            DOUBLE Spot = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // STRIKE--------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_STRIKE));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_STRIKE, buf, len + 1);
+            SetDlgItemText(Result, IDC_STRIKE2, buf);
+            DOUBLE Strike = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // MATURITY-------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_MAT));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_MAT, buf, len + 1);
+            SetDlgItemText(Result, IDC_MAT2, buf);
+            DOUBLE Mat = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // TAUX------------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_TAUX));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_TAUX, buf, len + 1);
+            SetDlgItemText(Result, IDC_TAUX2, buf);
+            DOUBLE Taux = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // Vol------------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_VOL));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_VOL, buf, len + 1);
+            SetDlgItemText(Result, IDC_VOL2, buf);
+            DOUBLE Vol = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            Data actif;
+            actif.S = Spot;
+            actif.K = Strike;
+            actif.r = Taux;
+            actif.T = Mat;
+            actif.v = Vol;
+            PayOff* pay_off_put = new PayOffPut();
+            Europeene put(pay_off_put);
+            double Prime = put.prime(actif);
+            TCHAR toStr[50];
+            sprintf_s(toStr, "%f", Prime);
+            SetDlgItemText(Result, IDC_RESULT, toStr);
+
+
+
+            ShowWindow(Result, SW_SHOW);
+            SendMessage(hWnDlg, WM_CLOSE, 0, 0);
+
+        }
+        break;
+        case IDC_BACK:
+        {
+            SendMessage(hWnDlg, WM_CLOSE, 0, 0);
+        }
+        break;
+        }
+        return 0;
+    }
+    break;
+
+    case WM_CLOSE:
+        DestroyWindow(hWnDlg);
+        hWndDlgBox = NULL;
+        break;
+
+    default:
+        return FALSE; // (DefWindowProc(hWnDlg, Msg, wParam, lParam));
+    }
+}
+
+
+// PROC CALL ASIATIQUE////////////////////////////////////////////////////////////////////////////////////////////
+LRESULT CALLBACK DlgProcCallAs(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (Msg)
+    {
+    case WM_INITDIALOG:
+        return TRUE;
+        break;
+
+    case WM_COMMAND:
+    {
+        switch (LOWORD(wParam))
+        {
+        case IDC_PRICER:
+        {
+
+            char* buf;
+            int len;
+            HWND Result = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_RESULT), GetParent(hWnDlg), (DLGPROC)DlgPriceEU);
+
+            // SPOT----------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_SPOT));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_SPOT, buf, len + 1);
+            SetDlgItemText(Result, IDC_SPOT2, buf);
+            DOUBLE Spot = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // STRIKE--------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_STRIKE));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_STRIKE, buf, len + 1);
+            SetDlgItemText(Result, IDC_STRIKE2, buf);
+            DOUBLE Strike = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // MATURITY-------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_MAT));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_MAT, buf, len + 1);
+            SetDlgItemText(Result, IDC_MAT2, buf);
+            DOUBLE Mat = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // TAUX------------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_TAUX));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_TAUX, buf, len + 1);
+            SetDlgItemText(Result, IDC_TAUX2, buf);
+            DOUBLE Taux = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // Vol------------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_VOL));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_VOL, buf, len + 1);
+            SetDlgItemText(Result, IDC_VOL2, buf);
+            DOUBLE Vol = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // BARRIERE-------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_BAR));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_BAR, buf, len + 1);
+            SetDlgItemText(Result, IDC_BAR2, buf);
+            DOUBLE Bar = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            //-------------------------------------------------------------------
+
+            Data actif;
+            actif.S = Spot;
+            actif.K = Strike;
+            actif.r = Taux;
+            actif.T = Mat;
+            actif.v = Vol;
+            PayOff* pay_off_call = new PayOffCall();
+            Asiatique call(pay_off_call);
+            double Prime = call.prime(actif);
+            TCHAR toStr[50];
+            sprintf_s(toStr, "%f", Prime);
+            SetDlgItemText(Result, IDC_RESULT, toStr);
+
+
+            ShowWindow(Result, SW_SHOW);
+            SendMessage(hWnDlg, WM_CLOSE, 0, 0);
+
+        }
+        break;
+        case IDC_BACK:
+        {
+            SendMessage(hWnDlg, WM_CLOSE, 0, 0);
+        }
+        break;
+        }
+        return 0;
+    }
+    break;
+
+    case WM_CLOSE:
+        DestroyWindow(hWnDlg);
+        hWndDlgBox = NULL;
+        break;
+
+    default:
+        return (DefWindowProc(hWnDlg, Msg, wParam, lParam));
+    }
+}
+
+// PROC PUT ASIA ////////////////////////////////////////////////////////////////////////////////////////
+LRESULT CALLBACK DlgProcPutAs(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (Msg)
+    {
+    case WM_INITDIALOG:
+        return TRUE;
+        break;
+
+    case WM_COMMAND:
+    {
+        switch (LOWORD(wParam))
+        {
+        case IDC_PRICER:
+        {
+
+            char* buf;
+            int len;
+            HWND Result = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_RESULT), GetParent(hWnDlg), (DLGPROC)DlgPriceEU);
+
+            // SPOT----------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_SPOT));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_SPOT, buf, len + 1);
+            SetDlgItemText(Result, IDC_SPOT2, buf);
+            DOUBLE Spot = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // STRIKE--------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_STRIKE));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_STRIKE, buf, len + 1);
+            SetDlgItemText(Result, IDC_STRIKE2, buf);
+            DOUBLE Strike = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // MATURITY-------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_MAT));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_MAT, buf, len + 1);
+            SetDlgItemText(Result, IDC_MAT2, buf);
+            DOUBLE Mat = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // TAUX------------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_TAUX));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_TAUX, buf, len + 1);
+            SetDlgItemText(Result, IDC_TAUX2, buf);
+            DOUBLE Taux = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // Vol------------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_VOL));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_VOL, buf, len + 1);
+            SetDlgItemText(Result, IDC_VOL2, buf);
+            DOUBLE Vol = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // BARRIERE-------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_BAR));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_BAR, buf, len + 1);
+            SetDlgItemText(Result, IDC_BAR2, buf);
+            DOUBLE Bar = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            //-------------------------------------------------------------------
+
+            Data actif;
+            actif.S = Spot;
+            actif.K = Strike;
+            actif.r = Taux;
+            actif.T = Mat;
+            actif.v = Vol;
+            PayOff* pay_off_put = new PayOffPut();
+            Asiatique put(pay_off_put);
+            double Prime = put.prime(actif);
+            TCHAR toStr[50];
+            sprintf_s(toStr, "%f", Prime);
+            SetDlgItemText(Result, IDC_RESULT, toStr);
+
+
+            ShowWindow(Result, SW_SHOW);
+            SendMessage(hWnDlg, WM_CLOSE, 0, 0);
+
+        }
+        break;
+        case IDC_BACK:
+        {
+            SendMessage(hWnDlg, WM_CLOSE, 0, 0);
+        }
+        break;
+        }
+        return 0;
+    }
+    break;
+
+    case WM_CLOSE:
+        DestroyWindow(hWnDlg);
+        hWndDlgBox = NULL;
+        break;
+
+    default:
+        return (DefWindowProc(hWnDlg, Msg, wParam, lParam));
+    }
+}
+
+// PROC CALL KO /////////////////////////////////////////////////////////////
+LRESULT CALLBACK DlgProcCallKO(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (Msg)
+    {
+    case WM_INITDIALOG:
+        return TRUE;
+        break;
+
+    case WM_COMMAND:
+    {
+        switch (LOWORD(wParam))
+        {
+        case IDC_PRICER:
+        {
+
+            char* buf;
+            int len;
+            HWND Result = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_RESULTBAR), GetParent(hWnDlg), (DLGPROC)DlgPriceBA);
+
+            // SPOT----------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_SPOT));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_SPOT, buf, len + 1);
+            SetDlgItemText(Result, IDC_SPOT2, buf);
+            DOUBLE Spot = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // STRIKE--------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_STRIKE));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_STRIKE, buf, len + 1);
+            SetDlgItemText(Result, IDC_STRIKE2, buf);
+            DOUBLE Strike = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // MATURITY-------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_MAT));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_MAT, buf, len + 1);
+            SetDlgItemText(Result, IDC_MAT2, buf);
+            DOUBLE Mat = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // TAUX------------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_TAUX));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_TAUX, buf, len + 1);
+            SetDlgItemText(Result, IDC_TAUX2, buf);
+            DOUBLE Taux = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // Vol------------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_VOL));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_VOL, buf, len + 1);
+            SetDlgItemText(Result, IDC_VOL2, buf);
+            DOUBLE Vol = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            Data actif;
+            actif.S = Spot;
+            actif.K = Strike;
+            actif.r = Taux;
+            actif.T = Mat;
+            actif.v = Vol;
+            PayOff* pay_off_call = new PayOffCall();
+            KnockOut call(pay_off_call);
+            double Prime = call.prime(actif);
+            TCHAR toStr[50];
+            sprintf_s(toStr, "%f", Prime);
+            SetDlgItemText(Result, IDC_RESULT, toStr);
+
+
+            ShowWindow(Result, SW_SHOW);
+            SendMessage(hWnDlg, WM_CLOSE, 0, 0);
+
+        }
+        break;
+        case IDC_BACK:
+        {
+            SendMessage(hWnDlg, WM_CLOSE, 0, 0);
+        }
+        break;
+        }
+        return 0;
+    }
+    break;
+
+    case WM_CLOSE:
+        DestroyWindow(hWnDlg);
+        hWndDlgBox = NULL;
+        break;
+
+    default:
+        return (DefWindowProc(hWnDlg, Msg, wParam, lParam));
+    }
+}
+//PROC PUT KO ///////////////////////////////////////////////////////////////////////
+LRESULT CALLBACK DlgProcPutKO(HWND hWnDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (Msg)
+    {
+    case WM_INITDIALOG:
+        return TRUE;
+        break;
+
+    case WM_COMMAND:
+    {
+        switch (LOWORD(wParam))
+        {
+        case IDC_PRICER:
+        {
+
+            char* buf;
+            int len;
+            HWND Result = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_RESULTBAR), GetParent(hWnDlg), (DLGPROC)DlgPriceBA);
+
+            // SPOT----------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_SPOT));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_SPOT, buf, len + 1);
+            SetDlgItemText(Result, IDC_SPOT2, buf);
+            DOUBLE Spot = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // STRIKE--------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_STRIKE));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_STRIKE, buf, len + 1);
+            SetDlgItemText(Result, IDC_STRIKE2, buf);
+            DOUBLE Strike = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // MATURITY-------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_MAT));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_MAT, buf, len + 1);
+            SetDlgItemText(Result, IDC_MAT2, buf);
+            DOUBLE Mat = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // TAUX------------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_TAUX));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_TAUX, buf, len + 1);
+            SetDlgItemText(Result, IDC_TAUX2, buf);
+            DOUBLE Taux = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // Vol------------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_VOL));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_VOL, buf, len + 1);
+            SetDlgItemText(Result, IDC_VOL2, buf);
+            DOUBLE Vol = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            // BARRIERE------------------------------------------------------------
+            len = GetWindowTextLength(GetDlgItem(hWnDlg, IDC_BAR));
+            buf = (char*)GlobalAlloc(GPTR, len + 1);
+            GetDlgItemText(hWnDlg, IDC_BAR, buf, len + 1);
+            SetDlgItemText(Result, IDC_BAR2, buf);
+            DOUBLE Bar = atof(buf);
+            GlobalFree((HANDLE)buf);
+
+            Data actif;
+            actif.S = Spot;
+            actif.K = Strike;
+            actif.r = Taux;
+            actif.T = Mat;
+            actif.v = Vol;
+            actif.L = Bar;
+            PayOff* pay_off_put = new PayOffPut();
+            KnockOut put(pay_off_put);
+            double Prime = put.prime(actif);
+            TCHAR toStr[50];
+            sprintf_s(toStr, "%f", Prime);
+            SetDlgItemText(Result, IDC_RESULT, toStr);
+
+
+            ShowWindow(Result, SW_SHOW);
+            SendMessage(hWnDlg, WM_CLOSE, 0, 0);
+
+        }
+        break;
+        case IDC_BACK:
+        {
+            SendMessage(hWnDlg, WM_CLOSE, 0, 0);
+        }
+        break;
+        }
+        return 0;
+    }
+    break;
+
+    case WM_CLOSE:
+        DestroyWindow(hWnDlg);
+        hWndDlgBox = NULL;
+        break;
+
+    default:
+        return (DefWindowProc(hWnDlg, Msg, wParam, lParam));
+    }
+}
+
+// MAINSCREEN //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 
@@ -189,7 +774,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
         wc.cbSize = sizeof(WNDCLASSEX);
         wc.style = 0;
-        wc.lpfnWndProc = (WNDPROC)DlgProc;
+        wc.lpfnWndProc = (WNDPROC)DlgProcCallEu;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
         wc.hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
@@ -222,7 +807,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             200,
             40,
             hWnd,
-            (HMENU)IDB_WNDBUTTON,
+            (HMENU)IDB_CALLEU,
             (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
             NULL);
 
@@ -240,7 +825,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             200,
             40,
             hWnd,
-            (HMENU)IDB_WNDBUTTON,
+            (HMENU)IDB_PUTEU,
             (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
             NULL);
 
@@ -258,7 +843,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             200,
             40,
             hWnd,
-            (HMENU)IDB_WNDBUTTON,
+            (HMENU)IDB_CALLAS,
             (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
             NULL);
 
@@ -276,7 +861,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             200,
             40,
             hWnd,
-            (HMENU)IDB_WNDBUTTON,
+            (HMENU)IDB_PUTAS,
             (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
             NULL);
 
@@ -294,7 +879,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             200,
             40,
             hWnd,
-            (HMENU)IDB_WNDBUTTON,
+            (HMENU)IDB_CALLKO,
             (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
             NULL);
 
@@ -313,7 +898,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             200,
             40,
             hWnd,
-            (HMENU)IDB_WNDBUTTON,
+            (HMENU)IDB_PUTKO,
             (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
             NULL);
 
@@ -326,13 +911,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             0,
             "BUTTON",
             "Call RKO",
-            WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+            WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_DISABLED,
             30,
             240,
             200,
             40,
             hWnd,
-            (HMENU)IDB_WNDBUTTON,
+            (HMENU)IDB_CALLRKO,
             (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
             NULL);
 
@@ -344,13 +929,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             0,
             "BUTTON",
             "Put RKO",
-            WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+            WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | WS_DISABLED,
             750,
             240,
             200,
             40,
             hWnd,
-            (HMENU)IDB_WNDBUTTON,
+            (HMENU)IDB_PUTRKO,
             (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
             NULL);
 
@@ -363,7 +948,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
         switch (LOWORD(wParam))
         {
-        case IDB_WNDBUTTON:
+        case IDB_CALLEU:
         {
             switch (HIWORD(wParam))
             {
@@ -371,7 +956,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             {
                 if (!hWndDlgBox)
                 {
-                    hWndDlgBox = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PRICE), hWnd, (DLGPROC)DlgProc);
+                    hWndDlgBox = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PRICE), hWnd, (DLGPROC)DlgProcCallEu);
                     ShowWindow(hWndDlgBox, SW_SHOW);
 
                     if (!hWndDlgBox)
@@ -380,6 +965,156 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             }
             break;
             }
+        }
+        break;
+
+        case IDB_PUTEU:
+        {
+            switch (HIWORD(wParam))
+            {
+            case BN_CLICKED:
+            {
+                if (!hWndDlgBox)
+                {
+                    hWndDlgBox = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PRICE), hWnd, (DLGPROC)DlgProcPutEu);
+                    ShowWindow(hWndDlgBox, SW_SHOW);
+
+                    if (!hWndDlgBox)
+                        MessageBox(NULL, "Dialog Box Failed.", "Error", MB_OK | MB_ICONERROR);
+                }
+            }
+            break;
+            }
+        }
+        break;
+        case IDB_CALLAS:
+        {
+            switch (HIWORD(wParam))
+            {
+            case BN_CLICKED:
+            {
+                if (!hWndDlgBox)
+                {
+                    hWndDlgBox = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PRICE), hWnd, (DLGPROC)DlgProcCallAs);
+                    ShowWindow(hWndDlgBox, SW_SHOW);
+
+                    if (!hWndDlgBox)
+                        MessageBox(NULL, "Dialog Box Failed.", "Error", MB_OK | MB_ICONERROR);
+                }
+            }
+            break;
+
+            }
+
+        }
+        break;
+
+        case IDB_PUTAS:
+        {
+            switch (HIWORD(wParam))
+            {
+            case BN_CLICKED:
+            {
+                if (!hWndDlgBox)
+                {
+                    hWndDlgBox = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PRICE), hWnd, (DLGPROC)DlgProcPutAs);
+                    ShowWindow(hWndDlgBox, SW_SHOW);
+
+                    if (!hWndDlgBox)
+                        MessageBox(NULL, "Dialog Box Failed.", "Error", MB_OK | MB_ICONERROR);
+                }
+            }
+            break;
+
+            }
+
+        }
+        break;
+
+        case IDB_CALLKO:
+        {
+            switch (HIWORD(wParam))
+            {
+            case BN_CLICKED:
+            {
+                if (!hWndDlgBox)
+                {
+                    hWndDlgBox = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PRICEBAR), hWnd, (DLGPROC)DlgProcCallKO);
+                    ShowWindow(hWndDlgBox, SW_SHOW);
+
+                    if (!hWndDlgBox)
+                        MessageBox(NULL, "Dialog Box Failed.", "Error", MB_OK | MB_ICONERROR);
+                }
+            }
+            break;
+
+            }
+
+        }
+        break;
+
+        case IDB_PUTKO:
+        {
+            switch (HIWORD(wParam))
+            {
+            case BN_CLICKED:
+            {
+                if (!hWndDlgBox)
+                {
+                    hWndDlgBox = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PRICEBAR), hWnd, (DLGPROC)DlgProcPutKO);
+                    ShowWindow(hWndDlgBox, SW_SHOW);
+
+                    if (!hWndDlgBox)
+                        MessageBox(NULL, "Dialog Box Failed.", "Error", MB_OK | MB_ICONERROR);
+                }
+            }
+            break;
+
+            }
+
+        }
+        break;
+        case IDB_CALLRKO:
+        {
+            switch (HIWORD(wParam))
+            {
+            case BN_CLICKED:
+            {
+                if (!hWndDlgBox)
+                {
+                    hWndDlgBox = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PRICEBAR), hWnd, (DLGPROC)DlgProcCallKO);
+                    ShowWindow(hWndDlgBox, SW_SHOW);
+
+                    if (!hWndDlgBox)
+                        MessageBox(NULL, "Dialog Box Failed.", "Error", MB_OK | MB_ICONERROR);
+                }
+            }
+            break;
+
+            }
+
+        }
+        break;
+
+        case IDB_PUTRKO:
+        {
+            switch (HIWORD(wParam))
+            {
+            case BN_CLICKED:
+            {
+                if (!hWndDlgBox)
+                {
+                    hWndDlgBox = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_PRICEBAR), hWnd, (DLGPROC)DlgProcPutKO);
+                    ShowWindow(hWndDlgBox, SW_SHOW);
+
+                    if (!hWndDlgBox)
+                        MessageBox(NULL, "Dialog Box Failed.", "Error", MB_OK | MB_ICONERROR);
+                }
+            }
+            break;
+
+            }
+
         }
         break;
         }
@@ -428,6 +1163,7 @@ INT WINAPI WinMain(HINSTANCE  hInstance,
         MessageBox(NULL, "Failed To Register The Window Class.", "Error", MB_OK | MB_ICONERROR);
         return 0;
     }
+    //InitCommonControls();
 
     HWND    hWnd;
     hWnd = CreateWindowEx(
