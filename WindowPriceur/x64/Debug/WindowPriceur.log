@@ -1,0 +1,12 @@
+﻿  Priceur.cpp
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur\Priceur.cpp(1244,15): warning C4244: 'return' : conversion de 'WPARAM' en 'int', perte possible de données
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur\Priceur.cpp(50): warning C4715: 'DlgPB' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur\Priceur.cpp(83): warning C4715: 'DlgPriceEU' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur\Priceur.cpp(116): warning C4715: 'DlgPriceBA' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur\Priceur.cpp(253): warning C4715: 'DlgProcCallEu' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur\Priceur.cpp(381): warning C4715: 'DlgProcPutEu' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur\Priceur.cpp(491): warning C4715: 'DlgProcCallAs' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur\Priceur.cpp(600): warning C4715: 'DlgProcPutAs' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur\Priceur.cpp(699): warning C4715: 'DlgProcCallKO' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur\Priceur.cpp(806): warning C4715: 'DlgProcPutKO' : les chemins de contrôle ne retournent pas tous une valeur
+  WindowPriceur.vcxproj -> C:\Users\VO2GROUP\Source\Repos\WindowPriceur\x64\Debug\WindowPriceur.exe
