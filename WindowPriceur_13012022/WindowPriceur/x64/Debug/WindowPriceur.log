@@ -1,0 +1,14 @@
+﻿  Priceur.cpp
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur_10012022\WindowPriceur\Priceur.cpp(1299,15): warning C4244: 'return' : conversion de 'WPARAM' en 'int', perte possible de données
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur_10012022\WindowPriceur\Priceur.cpp(55): warning C4715: 'DlgPB' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur_10012022\WindowPriceur\Priceur.cpp(88): warning C4715: 'DlgPriceEU' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur_10012022\WindowPriceur\Priceur.cpp(121): warning C4715: 'DlgPriceBA' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur_10012022\WindowPriceur\Priceur.cpp(395): warning C4715: 'DlgProcPutEu' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur_10012022\WindowPriceur\Priceur.cpp(546): warning C4715: 'DlgProcCallAs' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur_10012022\WindowPriceur\Priceur.cpp(267): warning C4715: 'DlgProcCallEu' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur_10012022\WindowPriceur\Priceur.cpp(655): warning C4715: 'DlgProcPutAs' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur_10012022\WindowPriceur\Priceur.cpp(754): warning C4715: 'DlgProcCallKO' : les chemins de contrôle ne retournent pas tous une valeur
+C:\Users\VO2GROUP\source\repos\WindowPriceur\WindowPriceur_10012022\WindowPriceur\Priceur.cpp(861): warning C4715: 'DlgProcPutKO' : les chemins de contrôle ne retournent pas tous une valeur
+resource.h(3): warning RC4005: 'IDC_STATIC' : redefinition
+  
+  WindowPriceur.vcxproj -> C:\Users\VO2GROUP\Source\Repos\WindowPriceur\WindowPriceur_10012022\x64\Debug\WindowPriceur.exe
