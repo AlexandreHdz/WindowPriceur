@@ -1,0 +1,348 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+#include "winres.h"
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+
+// Generated from the TEXTINCLUDE 2 resource.
+
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+"#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+"#include ""windows.h""\r\n"
+"#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+//Fenetre Input
+
+IDD_PRICE DIALOG DISCARDABLE  0, 0, 150, 300
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
+CAPTION "Pricing Input"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Spot", IDC_STATIC, 10, 10, 60, 10
+	EDITTEXT        IDC_SPOT, 80, 10, 60, 10, ES_AUTOHSCROLL
+	LTEXT           "Strike", IDC_STATIC, 10, 30, 60, 10
+	EDITTEXT        IDC_STRIKE, 80, 30, 60, 10, ES_AUTOHSCROLL
+	LTEXT           "Maturity", IDC_STATIC, 10, 50, 60, 10
+	EDITTEXT        IDC_MAT, 80, 50, 60, 10, ES_AUTOHSCROLL
+	LTEXT           "Taux (%)", IDC_STATIC, 10, 70, 60, 10
+	EDITTEXT        IDC_TAUX, 80, 70, 60, 10, ES_AUTOHSCROLL
+	LTEXT           "Volatility (%)", IDC_STATIC, 10, 90, 60, 10
+	EDITTEXT        IDC_VOL, 80, 90, 60, 10, ES_AUTOHSCROLL
+
+	// BOUTONS /////////////////////////////////////////////
+
+	PUSHBUTTON      "&Pricer", IDC_PRICER, 10, 110, 30, 14
+	PUSHBUTTON      "&Annuler", IDC_BACK, 110, 110, 30, 14
+
+	// RESULTS//////////////////////////////////////////////
+
+	LTEXT			"Prix B&S", IDC_STATIC, 10,140,60,10
+	EDITTEXT		IDC_RESULT2, 80, 140, 60, 10, ES_READONLY 
+	LTEXT			"Prix Monte Carlo", IDC_STATIC, 10,160,60,10
+	EDITTEXT		IDC_RESULT, 80, 160, 60, 10, ES_READONLY 
+	LTEXT			"Delta",IDC_STATIC, 10,180,60,10
+	EDITTEXT		IDC_DELTA, 80, 180, 60, 10, ES_READONLY
+	LTEXT			"Gamma", IDC_STATIC, 10, 200, 60, 10
+	EDITTEXT		IDC_GAMMA, 80, 200, 60, 10, ES_READONLY
+	LTEXT			"Vega", IDC_STATIC, 10, 220, 60, 10
+	EDITTEXT		IDC_VEGA, 80, 220, 60, 10, ES_READONLY
+	LTEXT			"Theta", IDC_STATIC, 10, 240, 60, 10
+	EDITTEXT		IDC_THETA, 80, 240, 60, 10, ES_READONLY
+	LTEXT			"Rho", IDC_STATIC, 10, 260, 60, 10
+	EDITTEXT		IDC_RHO, 80, 260, 60, 10, ES_READONLY
+END
+
+
+//PROGESS BAR //////////////////////////////////////////////////////
+IDD_PB DIALOG -5, 50, 150, 50
+STYLE WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Calcul en cours..."
+BEGIN
+	CONTROL "", IDE_PB, "msctls_progress32", 0, 10, 20, 130, 12
+END
+
+//Fenetre Input Opt Barriere ///////////////////////////////////////
+IDD_PRICEBAR DIALOG DISCARDABLE  0, 0, 150, 300
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
+CAPTION "Pricing Input"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Spot", IDC_STATIC, 10, 10, 60, 10
+	EDITTEXT        IDC_SPOT, 80, 10, 60, 10, ES_AUTOHSCROLL
+	LTEXT           "Strike", IDC_STATIC, 10, 30, 60, 10
+	EDITTEXT        IDC_STRIKE, 80, 30, 60, 10, ES_AUTOHSCROLL
+	LTEXT           "Maturity", IDC_STATIC, 10, 50, 60, 10
+	EDITTEXT        IDC_MAT, 80, 50, 60, 10, ES_AUTOHSCROLL
+	LTEXT           "Taux (%)", IDC_STATIC, 10, 70, 60, 10
+	EDITTEXT        IDC_TAUX, 80, 70, 60, 10, ES_AUTOHSCROLL
+	LTEXT           "Volatility (%)", IDC_STATIC, 10, 90, 60, 10
+	EDITTEXT        IDC_VOL, 80, 90, 60, 10, ES_AUTOHSCROLL
+	LTEXT			"Barriere", IDC_STATIC, 10,110,60,10
+	EDITTEXT		IDC_BAR, 80, 110, 60, 10, ES_AUTOHSCROLL
+
+	// BOUTONS /////////////////////////////////////////////
+
+	PUSHBUTTON      "&Pricer", IDC_PRICER, 10, 130, 30, 14
+	PUSHBUTTON      "&Annuler", IDC_BACK, 110, 130, 30, 14
+
+	// RESULTS//////////////////////////////////////////////
+
+	LTEXT			"Prix Monte Carlo", IDC_STATIC, 10, 180, 60, 10
+	EDITTEXT		IDC_RESULT, 80, 180, 60, 10, ES_READONLY
+
+END
+
+//MENU///////////////////////////////////////////////////
+IDR_MYMENU MENU DISCARDABLE
+BEGIN
+	POPUP "Data"
+	BEGIN
+		MENUITEM "Get Data Yahoo", ID_DONNEE
+	END
+END
+
+//INPUT YAHOO///////////////////////////////////////////
+IDD_YAHOO DIALOG DISCARDABLE  0, 0, 600,300 
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
+CAPTION "Yahoo Input"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Ticker", IDC_STATIC, 10, 10, 50, 10
+	EDITTEXT        IDC_TICKER, 110, 10, 50, 10, ES_AUTOHSCROLL
+	LTEXT           "Date debut (YYYY-MM-DD) ", IDC_STATIC, 10, 30, 100, 10
+	EDITTEXT        IDC_DD, 110, 30, 50, 10, ES_AUTOHSCROLL
+	LTEXT           "Date fin (YYYY-MM-DD)", IDC_STATIC, 10, 50, 100, 10
+	EDITTEXT        IDC_DF, 110, 50, 50, 10, ES_AUTOHSCROLL
+	LTEXT           "Rendement", IDC_STATICVAR, 10, 90, 100, 10
+	EDITTEXT        IDC_REND, 110, 90, 50, 10, ES_AUTOHSCROLL
+	LTEXT           "Variance", IDC_STATICREND, 10, 110, 100, 10
+	EDITTEXT        IDC_VARIANCE, 110, 110, 50, 10, ES_AUTOHSCROLL
+	PUSHBUTTON      "Ok", IDC_VALID, 20, 70, 30, 14
+	PUSHBUTTON      "Back", IDC_RET, 100, 70, 30, 14
+END
+
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	IDS_DATE	            "Date"
+	IDS_OPEN                "Openning"
+	IDS_HIGH                "High"
+	IDS_LOW                 "Low"
+	IDS_CLOS                "Closing"
+	IDS_CLOSADJ				"Adj Clos"
+	IDS_VOLUME				"Volume"
+END
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+IDD_MAIN, DIALOG
+BEGIN
+	LEFTMARGIN, 7
+	RIGHTMARGIN, 200
+	VERTGUIDE, 145
+	VERTGUIDE, 150
+	TOPMARGIN, 7
+	BOTTOMMARGIN, 149
+	END
+END
+#endif
+
+#endif 
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Français (France) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE
+BEGIN
+"resource.h\0"
+END
+
+2 TEXTINCLUDE
+BEGIN
+"#include ""winres.h""\r\n"
+"#include ""resource.h""\r\n"
+"\r\n"
+"#define APSTUDIO_READONLY_SYMBOLS\r\n"
+"\r\n"
+"// Generated from the TEXTINCLUDE 2 resource.\r\n"
+"\r\n"
+"#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+"#include ""windows.h""\r\n"
+"#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+"\r\n"
+"\r\n"
+"/////////////////////////////////////////////////////////////////////////////\r\n"
+"#undef APSTUDIO_READONLY_SYMBOLS\r\n"
+"\r\n"
+"/////////////////////////////////////////////////////////////////////////////\r\n"
+"// English (U.S.) resources\r\n"
+"\r\n"
+"#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+"#ifdef _WIN32\r\n"
+"LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US\r\n"
+"#pragma code_page(1252)\r\n"
+"#endif //_WIN32\r\n"
+"\r\n"
+"#ifdef APSTUDIO_INVOKED\r\n"
+"/////////////////////////////////////////////////////////////////////////////\r\n"
+"//\r\n"
+"// TEXTINCLUDE\r\n"
+"//\r\n"
+"\r\n"
+"1 TEXTINCLUDE DISCARDABLE \r\n"
+"BEGIN\r\n"
+"    ""resource.h\\0""\r\n"
+"END\r\n"
+"\r\n"
+"2 TEXTINCLUDE DISCARDABLE \r\n"
+"BEGIN\r\n"
+"    ""#define APSTUDIO_HIDDEN_SYMBOLS\\r\\n""\r\n"
+"    ""#include """"windows.h""""\\r\\n""\r\n"
+"    ""#undef APSTUDIO_HIDDEN_SYMBOLS\\r\\n""\r\n"
+"    ""\\0""\r\n"
+"END\r\n"
+"\r\n"
+"3 TEXTINCLUDE DISCARDABLE \r\n"
+"BEGIN\r\n"
+"    ""\\0""\r\n"
+"END\r\n"
+"\r\n"
+"#endif    // APSTUDIO_INVOKED\r\n"
+"\r\n"
+"\r\n"
+"/////////////////////////////////////////////////////////////////////////////\r\n"
+"//\r\n"
+"// Dialog\r\n"
+"//\r\n"
+"\r\n"
+"IDD_MAIN DIALOG DISCARDABLE  0, 0, 207, 156\r\n"
+"STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU\r\n"
+"CAPTION ""Controls One""\r\n"
+"FONT 8, ""MS Sans Serif""\r\n"
+"BEGIN\r\n"
+"    LTEXT           ""Add"",IDC_STATIC,7,10,14,8\r\n"
+"    EDITTEXT        IDC_TEXT,25,7,120,14,ES_AUTOHSCROLL\r\n"
+"    EDITTEXT        IDC_NUMBER,150,7,21,14,ES_NUMBER\r\n"
+"    LTEXT           ""times."",IDC_STATIC,177,10,23,8\r\n"
+"    LISTBOX         IDC_LIST,7,25,138,106,LBS_NOINTEGRALHEIGHT | LBS_EXTENDEDSEL | WS_VSCROLL | WS_TABSTOP\r\n"
+"    PUSHBUTTON      ""&Add"",IDC_ADD,150,30,50,14\r\n"
+"    PUSHBUTTON      ""&Remove"",IDC_REMOVE,150,47,50,14\r\n"
+"    PUSHBUTTON      ""&Clear"",IDC_CLEAR,150,63,50,14\r\n"
+"    LTEXT           ""This item was added"",IDC_STATIC,7,141,66,8\r\n"
+"    CTEXT           ""-"",IDC_SHOWCOUNT,77,141,32,8\r\n"
+"    LTEXT           ""times"",IDC_STATIC,114,141,17,8\r\n"
+"END\r\n"
+"\r\n"
+"\r\n"
+"#ifdef APSTUDIO_INVOKED\r\n"
+"GUIDELINES DESIGNINFO DISCARDABLE \r\n"
+"BEGIN\r\n"
+"    IDD_MAIN, DIALOG\r\n"
+"    BEGIN\r\n"
+"        LEFTMARGIN, 7\r\n"
+"        RIGHTMARGIN, 200\r\n"
+"        VERTGUIDE, 145\r\n"
+"        VERTGUIDE, 150\r\n"
+"        TOPMARGIN, 7\r\n"
+"        BOTTOMMARGIN, 149\r\n"
+"    END\r\n"
+"END\r\n"
+"#endif\r\n"
+"\r\n"
+"#endif \r\n"
+"\r\n"
+"\r\n"
+"\r\n"
+"\0"
+END
+
+3 TEXTINCLUDE
+BEGIN
+"\r\n"
+"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Français (France) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
